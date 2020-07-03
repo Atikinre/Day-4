@@ -1,7 +1,7 @@
 var roots = [];
 function regulaFalsi(f = function(x,a = 1){return  x*x - 2*x + 4}, xmin = -5, xmax = 5, dx = 10E-9){
     if (f(xmin) * f(xmax) >= 0) { 
-        ret
+      alert("нет");
     } 
     let c = xmin;    
     for (let i=0; i < 1000; i++) { 
@@ -15,5 +15,6 @@ function regulaFalsi(f = function(x,a = 1){return  x*x - 2*x + 4}, xmin = -5, xm
     } 
     roots.push(c);
 }
-for(let i = xmin; i < 5; i += )
-console.log(regulaFalsi());
+var xmin = -5, xmax = 5;
+for(let i = xmin; i < xmax; i += 1/Math.abs(xmax - xmin))
+    console.log(regulaFalsi(function(x,a = 1){return  x*x - 2*x + 4}, i, xmax));
