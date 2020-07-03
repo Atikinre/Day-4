@@ -1,14 +1,13 @@
 
-function regulaFalsi(f = function(x,a = 1){return  x*x-16}, xmin = -5, xmax = 5, dx = 10E-9){
+function regulaFalsi(f = function(x,a = 1){return  x*x*x - Math.cos(x)}, xmin = -5, xmax = 5, dx = 10E-9){
    let r,fr, m = 10E9;
    let n, side=0;
    /* starting values at endpoints of interval */
    let fs = f(xmin),
-   ft = f(xmax);
-
+   ft = f(xmax),
+   roots = [];
    for (n = 0; n < m; n++)
    {
-       if(fs - ft == 0)
        r = (fs*xmax - ft*xmin) / (fs - ft);
        if (Math.abs(xmax-xmin) < dx*Math.abs(xmax+xmin)) break;
        fr = f(r);
@@ -30,7 +29,7 @@ function regulaFalsi(f = function(x,a = 1){return  x*x-16}, xmin = -5, xmax = 5,
        else
        {
          /* fr * f_ very small (looks like zero) */
-         break;
+         roots.push(r);
        } 
     }
     return [r , n];
