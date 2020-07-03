@@ -1,48 +1,19 @@
 var roots = [];
-function regulaFalsi(
-  f = function(x, a = 1) {
-    return x * x - 9;
-  },
-  a,
-  b,
-  dx = 10e-9
-) {
-  let fa = f(a),
-      fb = f(b);
-  console.log(fa, fb);
-  for (let i = xmin; i < xmax; i += Math.abs(xmax - xmin)) {
-    root = (fa * b - fb * a) / (fa - fb);
-    if (Math.abs(f(b)) < dx || Math.abs(f(b)) < dx) {
-      roots.push("no");
-      break;
-    }
-    fr = f(root);
-    if (fr * fb > 0) {
-      
-      b = root;
-      fb = fr;
-      if (side == -1) fa /= 2;
-      side = -1;
-    } else if (fa * fr > 0) {
-      
-      a = root;
-      fa = fr;
-      if (side == +1) fb /= 2;
-      side = +1;
-    } else {
-      roots.push(root);
-      break;
-    }
-  }
+function regulaFalsi(f = function(x,a = 1){return  x*x - 2*x + 4}, xmin = -5, xmax = 5, dx = 10E-9){
+    if (f(xmin) * f(xmax) >= 0) { 
+        ret
+    } 
+    let c = xmin;    
+    for (let i=0; i < 1000; i++) { 
+        c = (xmin*f(xmax) - xmax*f(xmin))/ (f(xmax) - f(xmin)); 
+        if (f(c)==0) 
+            break; 
+        else if (f(c)*f(xmin) < 0) 
+            xmax = c; 
+        else
+            xmin = c; 
+    } 
+    roots.push(c);
 }
-var xmin = -5,
-  xmax = 5;
-regulaFalsi(
-    function(x, a = 1) {
-      return x*x*x - 27;
-    },
-    xmin,
-    xmax,
-    10e-9
-  );
-console.log(roots);
+for(let i = xmin; i < 5; i += )
+console.log(regulaFalsi());
