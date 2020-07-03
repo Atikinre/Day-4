@@ -1,5 +1,2 @@
-/* If you're feeling fancy you can add interactivity 
-    to your site with Javascript */
-
-// prints "hi" in the browser's dev tools console
+https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.0.2/math.min.js
 console.log("hi");
