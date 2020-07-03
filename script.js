@@ -3,7 +3,11 @@ function regulaFalsi(f = function(x,a = 1){return  x*x - 2*x + 4}, xmin = -5, xm
     if (f(xmin) * f(xmax) > 0) { 
       console.log("нет");
       return false;
-    } 
+    }
+    if (f(xmin) * f(xmax) < dx) { 
+      console.log(xmin, xmax);
+      return true;
+    }
     let c = xmin;    
     for (let i=0; i < 1000; i++) { 
         c = (xmin*f(xmax) - xmax*f(xmin))/ (f(xmax) - f(xmin)); 
@@ -18,5 +22,5 @@ function regulaFalsi(f = function(x,a = 1){return  x*x - 2*x + 4}, xmin = -5, xm
     console.log(c);
     return true;
 }
-var xmin = -5, xmax = 5;
+var xmin = -2, xmax = 2;
 regulaFalsi(function(x,a = 1){return  x*x - 4}, xmin, xmax, 10e-9);
