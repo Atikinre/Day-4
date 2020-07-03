@@ -29,9 +29,9 @@ function regulaFalsi(f = function(x,a = 1){return  x*x*x - Math.cos(x)}, xmin = 
        else
        {
          /* fr * f_ very small (looks like zero) */
-         roots.push(r);
+         roots.push([r, n]);
        } 
     }
-    return [r , n];
+    return [roots , n];
 }
 console.log(regulaFalsi());
