@@ -1,7 +1,7 @@
 var roots = [];
 function regulaFalsi(f = function(x,a = 1){return  x*x - 2*x + 4}, xmin = -5, xmax = 5, dx = 10E-9){
-    if (f(xmin) * f(xmax) > 0 || f(xmax) - f(xmin) === NaN) { 
-      console.log("нет");
+    if (Math.abs(f(xmin) * f(xmax)) > dx || f(xmax) - f(xmin) < dx) { 
+      console.log(f(xmin), f(xmax));
       return false;
     }
     let c = xmin;    
@@ -17,6 +17,8 @@ function regulaFalsi(f = function(x,a = 1){return  x*x - 2*x + 4}, xmin = -5, xm
     console.log(c);
     return true;
 }
-var xmin = -3, xmax = 2;
-
-regulaFalsi(function(x,a = 1){return  x*x - 4*x + 4}, xmin, xmax, 10e-9);
+var xmin = -3, xmax = 3;
+for(var i = xmin; i < xmax; i += 1/Math.abs(xmax + xmin)){
+  console.log(i, i + 1/Math.abs(Math.abs(xmax) + Math.abs(xmin)));
+  regulaFalsi(function(x,a = 1){return  x*x - 4*x + 4}, i, i + 1/Math.abs(Math.abs(xmax) - Math.abs(xmin)), 10e-9);
+}
