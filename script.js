@@ -1,4 +1,3 @@
-var lol = 0;
 var graph = document.getElementById("canvas");
 var ctx = graph.getContext("2d");
 class Graphics1d {
@@ -49,7 +48,22 @@ class Graphics1d {
     this.ev = 1;
     return this.mxe;
   }
-  
+  drawrf(x = [0,1], y = [0, 1]){
+    let stepx = this.W / (-this.xmin + this.xmax),
+      stepy = this.H / (-this.ymin + this.ymax),
+      zerox = -this.xmin * stepx,
+      zeroy = this.ymax * stepy;
+  for(let i = 0; i < x.length; i += 2){
+    console.log(x[i], y[i], x[i+1], y[i+1]);
+    ctx.strokeStyle = "blue";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(zerox + x[i] * stepx, zeroy - y[i] * stepy);
+    ctx.lineTo(zerox + x[i + 1] * stepx, zeroy + y[i + 1] * stepy);
+    ctx.stroke();
+    ctx.closePath();
+  }
+}
   drawbg(bg = "grey", axis = "green"){
      let stepx = this.W / (-this.xmin + this.xmax),
       stepy = this.H / (-this.ymin + this.ymax),
@@ -306,7 +320,7 @@ var ng = new Graphics1d();
 var roots = [];
 var mins = new Set;
 var maxs = new Set;
-var regx
+var regx = [], regy = [];
 function check(f = function(x){return  2*x}, y, step){
   if (f(y - step) <= 0 && f(y + step) >= 0){
     mins.add(y);
@@ -330,7 +344,10 @@ async function regulaFalsi(f = function(x){return  2*x - 2*x}, xmin = -5, xmax =
     }
     let c = (xmin + xmax)/2;
     for (let i=0; i < 1000; i++) {
-        lol++;
+        regx.push(xmin);
+        regx.push(xmax);
+        regy.push(f(xmin));
+        regy.push(f(xmax));
         c = (xmin*f(xmax) - xmax*f(xmin))/ (f(xmax) - f(xmin)); 
         if (f(c)*f(xmin) < 0) 
             xmax = c; 
@@ -372,5 +389,9 @@ function yes() {
     check(d, roots[i], (-ng.xmin + ng.xmax) / ng.W);
   document.getElementById("mins").innerHTML = Array.from(mins).join(", ");
   document.getElementById("maxs").innerHTML = Array.from(maxs).join(", ");
-  console.log(lol);
+  console.log(regx, regy);
+  
 }
+
+ng.drawbg();
+ng.drawrf(regx, regy);
