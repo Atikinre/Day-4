@@ -1,3 +1,5 @@
+var graph = document.getElementById("canvas");
+var ctx = graph.getContext("2d");
 class Graphics1d {
   constructor(
     xmin = -10.0,
@@ -46,25 +48,8 @@ class Graphics1d {
     this.ev = 1;
     return this.mxe;
   }
-  draw(
-    dots = "red",
-    axis = "green",
-    zeros = "indigo",
-    gaps = "magenta",
-    bg = "gray"
-  ) {
-    var graph = document.getElementById("canvas");
-    graph.width = this.W;
-    graph.height = this.H;
-    var ctx = graph.getContext("2d");
-    var drawed = new Graphics1d();
-    if (this.ev == 0) this.evaluate();
-    let stepx = this.W / (-this.xmin + this.xmax),
-      stepy = this.H / (-this.ymin + this.ymax),
-      zerox = -this.xmin * stepx,
-      zeroy = this.ymax * stepy;
-    // сетка
-    {
+  
+  drawbg(){
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, ng.W, ng.H);
     ctx.beginPath();
@@ -108,6 +93,22 @@ class Graphics1d {
     }
     }
     //
+  draw(
+    dots = "red",
+    axis = "green",
+    zeros = "indigo",
+    gaps = "magenta",
+    bg = "gray"
+  ) {
+    graph.width = this.W;
+    graph.height = this.H;
+    var drawed = new Graphics1d();
+    if (this.ev == 0) this.evaluate();
+    let stepx = this.W / (-this.xmin + this.xmax),
+      stepy = this.H / (-this.ymin + this.ymax),
+      zerox = -this.xmin * stepx,
+      zeroy = this.ymax * stepy;
+    
     // Функция
     {
     ctx.beginPath();
@@ -329,10 +330,7 @@ function regulaFalsi(f = function(x){return  2*x - 2*x}, xmin = -5, xmax = 5, dx
         else if (f(c)*f(xmax) < 0) 
             xmin = c; 
         else {
-          if(Math.abs(c) < dx)
-            roots.push(0);
-          else
-            roots.push(Math.floor(c / dx) * dx);
+            roots.push(Math.trunc(c / dx) * dx);
           break;
         }
     } 
@@ -358,6 +356,8 @@ function yes() {
   ng = new Graphics1d(xmin, xmax, ymin, ymax, W, H, m);
   ng.draw();
   roots = [];
+  mins.clear();
+  maxs.clear();
   for(var i = xmin; i <= xmax; i += (-ng.xmin + ng.xmax) / ng.W){
     regulaFalsi(d, i, i + 0.1, 10e-9);
   }
