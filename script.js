@@ -63,6 +63,8 @@ class Graphics1d {
       stepy = this.H / (-this.ymin + this.ymax),
       zerox = -this.xmin * stepx,
       zeroy = this.ymax * stepy;
+    // сетка
+    {
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, ng.W, ng.H);
     ctx.beginPath();
@@ -104,6 +106,10 @@ class Graphics1d {
       ctx.closePath();
       ctx.stroke();
     }
+    }
+    //
+    // Функция
+    {
     ctx.beginPath();
     ctx.lineWidth = 1;
     ctx.strokeStyle = dots;
@@ -163,6 +169,10 @@ class Graphics1d {
     }
     ctx.stroke();
     ctx.closePath();
+    }
+    //
+    // Производная
+    {
     ctx.beginPath();
     ctx.strokeStyle = "blue";
     ctx.moveTo(zerox + this.xmin * stepx, zeroy - this.der[0] * stepy);
@@ -222,6 +232,10 @@ class Graphics1d {
     }
     ctx.stroke();
     ctx.closePath();
+    }
+    //
+    //Текст
+    {
     ctx.font = "25px Consolas";
     ctx.textBaseline = "ideographic";
     ctx.fillStyle = "black";
@@ -233,6 +247,8 @@ class Graphics1d {
       zeroy - this.ymax * stepy + 25
     );
     ctx.fillText(mn, zerox + this.xmin * stepx, zeroy - this.ymin * stepy);
+    }
+    //
   }
 
   autodraw(
