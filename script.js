@@ -304,7 +304,7 @@ for(var i = ng.xmin; i <= ng.xmax; i += (-ng.xmin + ng.xmax) / ng.W){
   }
 var res = document.getElementById("roots");
   res.innerHTML = Array.from(roots).join(", ");
-function regulaFalsi(f = function(x,a = 1){return  x*x - 2*x + 4}, xmin = -5, xmax = 5, dx = 10E-9){
+function regulaFalsi(n = new Graphics1d(),i = 0, j = Math.abs(n.H, n,W), dx = 10E-9){
     if (f(xmin) * f(xmax) > 0 || Math.abs(f(xmax) - f(xmin)) < dx) { 
       return false;
     }
