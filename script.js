@@ -34,6 +34,15 @@ class Graphics1d {
       this.mxe[1] = Math.max(this.fvalues[count - 1], this.mxe[1]);
       this.mxe[0] = Math.min(this.fvalues[count - 1], this.mxe[0]);
     }
+    this.der = new Float64Array(this.H * this.W)
+    for(let i = 0; i < count; i++){
+      if(i == 0)
+        this.der[i] = (this.fvalues[i + 1] - this.fvalues[i]) / (this.dots[i+1] - this.dots[i])
+      else if(i == count  - 1)
+        this.der[i] = (this.fvalues[i] - this.fvalues[i-1]) / (this.dots[i] - this.dots[i-1])
+      else
+        this.der[i] = (this.fvalues[i+1] - this.fvalues[i-1]) / (this.dots[i+1] - this.dots[i-1])
+    }
     this.ev = 1;
     return this.mxe;
   }
@@ -215,10 +224,11 @@ var sqx = 1,
 var ng = new Graphics1d();
 var roots = new Set;
 ng.draw();
-for(var i = ng.xmin; i <= xmax; i += 0.1){
-    regulaFalsi(m, i, i + 0.1, 10e-9);
+for(var i = ng.xmin; i <= ng.xmax; i += 0.1){
+    regulaFalsi(ng.f, i, i + 0.1, 10e-9);
   }
-  console.log(roots);
+var res = document.getElementById("roots");
+  res.innerHTML = Array.from(roots).join(", ");
 function regulaFalsi(f = function(x,a = 1){return  x*x - 2*x + 4}, xmin = -5, xmax = 5, dx = 10E-9){
     if (f(xmin) * f(xmax) > 0 || Math.abs(f(xmax) - f(xmin)) < dx) { 
       return false;
@@ -257,6 +267,8 @@ function yes() {
   for(var i = xmin; i <= xmax; i += 0.1){
     regulaFalsi(m, i, i + 0.1, 10e-9);
   }
-  console.log(roots);
+  var res = document.getElementById("roots");
+  res.innerHTML = Array.from(roots).join(", ");
+  console.log(ng.der);
 }
 
