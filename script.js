@@ -1,3 +1,4 @@
+var lol = 0;
 var graph = document.getElementById("canvas");
 var ctx = graph.getContext("2d");
 class Graphics1d {
@@ -305,6 +306,7 @@ var ng = new Graphics1d();
 var roots = [];
 var mins = new Set;
 var maxs = new Set;
+var regx
 function check(f = function(x){return  2*x}, y, step){
   if (f(y - step) <= 0 && f(y + step) >= 0){
     mins.add(y);
@@ -326,16 +328,9 @@ async function regulaFalsi(f = function(x){return  2*x - 2*x}, xmin = -5, xmax =
     if (f(xmin) * f(xmax) > 0 || Math.abs(f(xmax) - f(xmin)) < dx) { 
       return false;
     }
-    let c = (xmin + xmax)/2;    
+    let c = (xmin + xmax)/2;
     for (let i=0; i < 1000; i++) {
-        await new Promise(resolve => setTimeout(resolve, 10));
-        ng.drawbg();
-        ctx.beginPath();
-        ctx.strokeStyle = "blue";
-        ctx.moveTo(xmin, f(xmin));
-        ctx.lineTo(xmax, f(xmax));
-        ctx.stroke();
-        ctx.endPath();
+        lol++;
         c = (xmin*f(xmax) - xmax*f(xmin))/ (f(xmax) - f(xmin)); 
         if (f(c)*f(xmin) < 0) 
             xmax = c; 
@@ -369,6 +364,7 @@ function yes() {
   roots = [];
   mins.clear();
   maxs.clear();
+  ng.drawbg();
   for(var i = xmin; i <= xmax; i += (-ng.xmin + ng.xmax) / ng.W){
     regulaFalsi(d, i, i + 0.1, 10e-9);
   }
@@ -376,5 +372,5 @@ function yes() {
     check(d, roots[i], (-ng.xmin + ng.xmax) / ng.W);
   document.getElementById("mins").innerHTML = Array.from(mins).join(", ");
   document.getElementById("maxs").innerHTML = Array.from(maxs).join(", ");
+  console.log(lol);
 }
-
