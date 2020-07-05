@@ -2,10 +2,10 @@ var graph = document.getElementById("canvas");
 var ctx = graph.getContext("2d");
 class Graphics1d {
   constructor(
-    xmin = -1.0,
-    xmax = 1.0,
-    ymin = -1.0,
-    ymax = 1.0,
+    xmin = -10.0,
+    xmax = 10.0,
+    ymin = -10.0,
+    ymax = 10.0,
     W = 512,
     H = 512,
     f = function(x) {
@@ -48,26 +48,7 @@ class Graphics1d {
     this.ev = 1;
     return this.mxe;
   }
-  async drawrf(x = [0,1], y = [0, 1]){
-    this.drawbg();
-    let stepx = this.W / (-this.xmin + this.xmax),
-      stepy = this.H / (-this.ymin + this.ymax),
-      zerox = -this.xmin * stepx,
-      zeroy = this.ymax * stepy;
-  for(let i = 0; i < x.length; i += 2){
-    //await new Promise(resolve => setTimeout(resolve, 10));
-    this.drawbg();
-    ctx.strokeStyle = "blue";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(zerox + x[i] * stepx, zeroy - y[i] * stepy);
-    ctx.lineTo(zerox + x[i + 1] * stepx, zeroy + y[i + 1] * stepy);
-    ctx.stroke();
-    ctx.closePath();
-  }
-  regx = [];
-  regy = []; 
-}
+  
   drawbg(bg = "grey", axis = "green"){
      let stepx = this.W / (-this.xmin + this.xmax),
       stepy = this.H / (-this.ymin + this.ymax),
@@ -115,6 +96,7 @@ class Graphics1d {
       ctx.stroke();
     }
     }
+    //
   draw(
     dots = "red",
     axis = "green",
@@ -317,13 +299,12 @@ function replaceSpecialSequence(str) {
   str = str.split("e").join("Math.E");
   return str;
 }
-var sqx = 0.5,
-  sqy = 0.5;
+var sqx = 1,
+  sqy = 1;
 var ng = new Graphics1d();
 var roots = [];
 var mins = new Set;
 var maxs = new Set;
-var regx = [], regy = [];
 function check(f = function(x){return  2*x}, y, step){
   if (f(y - step) <= 0 && f(y + step) >= 0){
     mins.add(y);
@@ -341,16 +322,20 @@ for(let i = 0; i < roots.length; i++)
     check(function(x){return  2*x}, roots[i], (-ng.xmin + ng.xmax) / ng.W);
 document.getElementById("mins").innerHTML = Array.from(mins).join(", ");
 document.getElementById("maxs").innerHTML = Array.from(maxs).join(", ");
-function regulaFalsi(f = function(x){return  2*x - 2*x}, xmin = -5, xmax = 5, dx = 10E-9){
+async function regulaFalsi(f = function(x){return  2*x - 2*x}, xmin = -5, xmax = 5, dx = 10E-9){
     if (f(xmin) * f(xmax) > 0 || Math.abs(f(xmax) - f(xmin)) < dx) { 
       return false;
     }
-    let c = (xmin + xmax)/2;
+    let c = (xmin + xmax)/2;    
     for (let i=0; i < 1000; i++) {
-        regx.push(xmin);
-        regx.push(xmax);
-        regy.push(f(xmin));
-        regy.push(f(xmax));
+        await new Promise(resolve => setTimeout(resolve, 10));
+        ng.drawbg();
+        ctx.beginPath();
+        ctx.strokeStyle = "blue";
+        ctx.moveTo(xmin, f(xmin));
+        ctx.lineTo(xmax, f(xmax));
+        ctx.stroke();
+        ctx.endPath();
         c = (xmin*f(xmax) - xmax*f(xmin))/ (f(xmax) - f(xmin)); 
         if (f(c)*f(xmin) < 0) 
             xmax = c; 
@@ -384,15 +369,12 @@ function yes() {
   roots = [];
   mins.clear();
   maxs.clear();
-  ng.drawbg();
   for(var i = xmin; i <= xmax; i += (-ng.xmin + ng.xmax) / ng.W){
     regulaFalsi(d, i, i + 0.1, 10e-9);
   }
   for(let i = 0; i < roots.length; i++)
     check(d, roots[i], (-ng.xmin + ng.xmax) / ng.W);
-  console.log(roots, mins, maxs);
   document.getElementById("mins").innerHTML = Array.from(mins).join(", ");
   document.getElementById("maxs").innerHTML = Array.from(maxs).join(", ");
-  ng.drawrf(regx, regy);
 }
-ng.drawrf(regx, regy);
+
