@@ -213,9 +213,12 @@ function replaceSpecialSequence(str) {
 var sqx = 1,
   sqy = 1;
 var ng = new Graphics1d();
-
-ng.draw();
 var roots = new Set;
+ng.draw();
+for(var i = ng.xmin; i <= xmax; i += 0.1){
+    regulaFalsi(m, i, i + 0.1, 10e-9);
+  }
+  console.log(roots);
 function regulaFalsi(f = function(x,a = 1){return  x*x - 2*x + 4}, xmin = -5, xmax = 5, dx = 10E-9){
     if (f(xmin) * f(xmax) > 0 || Math.abs(f(xmax) - f(xmin)) < dx) { 
       return false;
@@ -234,8 +237,26 @@ function regulaFalsi(f = function(x,a = 1){return  x*x - 2*x + 4}, xmin = -5, xm
     } 
     return true;
 }
-var xmin = -4, xmax = 4;
-for(var i = xmin; i <= xmax; i += 0.1){
-  regulaFalsi(function(x,a = 1){return  Math.sin(x)}, i, i + 0.1, 10e-9);
+function yes() {
+  var xmin = parseFloat(document.getElementById("xmin").value),
+    xmax = parseFloat(document.getElementById("xmax").value),
+    ymin = parseFloat(document.getElementById("ymin").value),
+    ymax = parseFloat(document.getElementById("ymax").value),
+    W = parseFloat(document.getElementById("W").value),
+    H = parseFloat(document.getElementById("H").value),
+    f = document.getElementById("f").value;
+  sqx = parseFloat(document.getElementById("sqx").value);
+  sqy = parseFloat(document.getElementById("sqy").value);
+  f = replaceSpecialSequence(f);
+  var m = function(x) {
+    return eval(f);
+  };
+  ng = new Graphics1d(xmin, xmax, ymin, ymax, W, H, m);
+  ng.draw();
+  roots.clear();
+  for(var i = xmin; i <= xmax; i += 0.1){
+    regulaFalsi(m, i, i + 0.1, 10e-9);
+  }
+  console.log(roots);
 }
-console.log(roots);
+
