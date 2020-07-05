@@ -300,22 +300,21 @@ var ng = new Graphics1d();
 var roots = [];
 var mins = new Set;
 var maxs = new Set;
-function check(f = function(x){return  2*x},y = 0 , step = 0.01 ){
+function check(f = function(x){return  2*x}, y, step){
   if (f(y - step) <= 0 && f(y + step) >= 0){
     mins.add(y);
-    console.log("min");
   }
   else if(f(y - step) >= 0 && f(y + step) <= 0){
     maxs.add(y);
-    console.log("max");
   }
-  else console.log(f(y - step), f(y + step));
   
 }
 ng.draw();
 for(var i = ng.xmin; i <= ng.xmax; i += (-ng.xmin + ng.xmax) / ng.W){
     regulaFalsi(function(x){return  2*x}, i, i + 0.1, 10e-9);
   }
+for(let i = 0; i < roots.length; i++)
+    check(function(x){return  2*x}, roots[i], (-ng.xmin + ng.xmax) / ng.W);
 document.getElementById("mins").innerHTML = Array.from(mins).join(", ");
 document.getElementById("maxs").innerHTML = Array.from(maxs).join(", ");
 function regulaFalsi(f = function(x){return  2*x - 2*x}, xmin = -5, xmax = 5, dx = 10E-9){
@@ -330,10 +329,10 @@ function regulaFalsi(f = function(x){return  2*x - 2*x}, xmin = -5, xmax = 5, dx
         else if (f(c)*f(xmax) < 0) 
             xmin = c; 
         else {
-          if(c < dx)
+          if(Math.abs(c) < dx)
             roots.push(0);
           else
-            roots.push(c);
+            roots.push(Math.floor(c / dx) * dx);
           break;
         }
     } 
@@ -358,13 +357,12 @@ function yes() {
   }
   ng = new Graphics1d(xmin, xmax, ymin, ymax, W, H, m);
   ng.draw();
-  roots.clear();
+  roots = [];
   for(var i = xmin; i <= xmax; i += (-ng.xmin + ng.xmax) / ng.W){
     regulaFalsi(d, i, i + 0.1, 10e-9);
   }
-  for(let i = 0; i < roots.size; i++)
-    check(m, roots[i], (-ng.xmin + ng.xmax) / ng.W);
-  console.log(roots, mins, maxs);
+  for(let i = 0; i < roots.length; i++)
+    check(d, roots[i], (-ng.xmin + ng.xmax) / ng.W);
   document.getElementById("mins").innerHTML = Array.from(mins).join(", ");
   document.getElementById("maxs").innerHTML = Array.from(maxs).join(", ");
 }
