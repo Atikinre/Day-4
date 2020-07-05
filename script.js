@@ -283,7 +283,7 @@ var sqx = 1,
 var ng = new Graphics1d();
 var roots = new Set;
 ng.draw();
-for(var i = ng.xmin; i <= ng.xmax; i += 0.1){
+for(var i = ng.xmin; i <= ng.xmax; i += (-ng.xmin + ng.xmax) / ng.W){
     regulaFalsi(ng.f, i, i + 0.1, 10e-9);
   }
 var res = document.getElementById("roots");
@@ -328,6 +328,5 @@ function yes() {
   }
   var res = document.getElementById("roots");
   res.innerHTML = Array.from(roots).join(", ");
-  console.log(ng.der);
 }
 
