@@ -2,10 +2,10 @@ var graph = document.getElementById("canvas");
 var ctx = graph.getContext("2d");
 class Graphics1d {
   constructor(
-    xmin = -10.0,
-    xmax = 10.0,
-    ymin = -10.0,
-    ymax = 10.0,
+    xmin = -1.0,
+    xmax = 1.0,
+    ymin = -1.0,
+    ymax = 1.0,
     W = 512,
     H = 512,
     f = function(x) {
@@ -48,13 +48,15 @@ class Graphics1d {
     this.ev = 1;
     return this.mxe;
   }
-  drawrf(x = [0,1], y = [0, 1]){
+  async drawrf(x = [0,1], y = [0, 1]){
+    this.drawbg();
     let stepx = this.W / (-this.xmin + this.xmax),
       stepy = this.H / (-this.ymin + this.ymax),
       zerox = -this.xmin * stepx,
       zeroy = this.ymax * stepy;
   for(let i = 0; i < x.length; i += 2){
-    console.log(x[i], y[i], x[i+1], y[i+1]);
+    await new Promise(resolve => setTimeout(resolve, 100));
+    this.drawbg();
     ctx.strokeStyle = "blue";
     ctx.lineWidth = 1;
     ctx.beginPath();
@@ -63,6 +65,8 @@ class Graphics1d {
     ctx.stroke();
     ctx.closePath();
   }
+  regx = [];
+  regy = []; 
 }
   drawbg(bg = "grey", axis = "green"){
      let stepx = this.W / (-this.xmin + this.xmax),
@@ -111,7 +115,6 @@ class Graphics1d {
       ctx.stroke();
     }
     }
-    //
   draw(
     dots = "red",
     axis = "green",
@@ -314,8 +317,8 @@ function replaceSpecialSequence(str) {
   str = str.split("e").join("Math.E");
   return str;
 }
-var sqx = 1,
-  sqy = 1;
+var sqx = 0.5,
+  sqy = 0.5;
 var ng = new Graphics1d();
 var roots = [];
 var mins = new Set;
@@ -338,7 +341,8 @@ for(let i = 0; i < roots.length; i++)
     check(function(x){return  2*x}, roots[i], (-ng.xmin + ng.xmax) / ng.W);
 document.getElementById("mins").innerHTML = Array.from(mins).join(", ");
 document.getElementById("maxs").innerHTML = Array.from(maxs).join(", ");
-async function regulaFalsi(f = function(x){return  2*x - 2*x}, xmin = -5, xmax = 5, dx = 10E-9){
+function regulaFalsi(f = function(x){return  2*x - 2*x}, xmin = -5, xmax = 5, dx = 10E-9){
+    
     if (f(xmin) * f(xmax) > 0 || Math.abs(f(xmax) - f(xmin)) < dx) { 
       return false;
     }
@@ -382,16 +386,15 @@ function yes() {
   mins.clear();
   maxs.clear();
   ng.drawbg();
+  ;
   for(var i = xmin; i <= xmax; i += (-ng.xmin + ng.xmax) / ng.W){
     regulaFalsi(d, i, i + 0.1, 10e-9);
   }
+  ng.drawrf(regx, regy);
   for(let i = 0; i < roots.length; i++)
     check(d, roots[i], (-ng.xmin + ng.xmax) / ng.W);
   document.getElementById("mins").innerHTML = Array.from(mins).join(", ");
   document.getElementById("maxs").innerHTML = Array.from(maxs).join(", ");
-  console.log(regx, regy);
   
 }
-
-ng.drawbg();
 ng.drawrf(regx, regy);
