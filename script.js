@@ -49,16 +49,20 @@ class Graphics1d {
     return this.mxe;
   }
   
-  drawbg(){
+  drawbg(bg = "grey", axis = "green"){
+     let stepx = this.W / (-this.xmin + this.xmax),
+      stepy = this.H / (-this.ymin + this.ymax),
+      zerox = -this.xmin * stepx,
+      zeroy = this.ymax * stepy;
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, ng.W, ng.H);
     ctx.beginPath();
     ctx.lineWidth = 2;
     ctx.strokeStyle = axis;
     ctx.moveTo(0, zeroy);
-    ctx.lineTo(ng.W, zeroy);
+    ctx.lineTo(this.W, zeroy);
     ctx.moveTo(zerox, 0);
-    ctx.lineTo(zerox, ng.H);
+    ctx.lineTo(zerox, this.H);
     ctx.closePath();
     ctx.stroke();
     ctx.lineWidth = 0.2;
@@ -108,7 +112,7 @@ class Graphics1d {
       stepy = this.H / (-this.ymin + this.ymax),
       zerox = -this.xmin * stepx,
       zeroy = this.ymax * stepy;
-    
+    this.drawbg(bg,axis);
     // Функция
     {
     ctx.beginPath();
@@ -310,7 +314,7 @@ function check(f = function(x){return  2*x}, y, step){
   }
   
 }
-ng.draw();
+
 for(var i = ng.xmin; i <= ng.xmax; i += (-ng.xmin + ng.xmax) / ng.W){
     regulaFalsi(function(x){return  2*x}, i, i + 0.1, 10e-9);
   }
@@ -318,12 +322,20 @@ for(let i = 0; i < roots.length; i++)
     check(function(x){return  2*x}, roots[i], (-ng.xmin + ng.xmax) / ng.W);
 document.getElementById("mins").innerHTML = Array.from(mins).join(", ");
 document.getElementById("maxs").innerHTML = Array.from(maxs).join(", ");
-function regulaFalsi(f = function(x){return  2*x - 2*x}, xmin = -5, xmax = 5, dx = 10E-9){
+async function regulaFalsi(f = function(x){return  2*x - 2*x}, xmin = -5, xmax = 5, dx = 10E-9){
     if (f(xmin) * f(xmax) > 0 || Math.abs(f(xmax) - f(xmin)) < dx) { 
       return false;
     }
     let c = (xmin + xmax)/2;    
-    for (let i=0; i < 1000; i++) { 
+    for (let i=0; i < 1000; i++) {
+        await new Promise(resolve => setTimeout(resolve, 10));
+        ng.drawbg();
+        ctx.beginPath();
+        ctx.strokeStyle = "blue";
+        ctx.moveTo(xmin, f(xmin));
+        ctx.lineTo(xmax, f(xmax));
+        ctx.stroke();
+        ctx.endPath();
         c = (xmin*f(xmax) - xmax*f(xmin))/ (f(xmax) - f(xmin)); 
         if (f(c)*f(xmin) < 0) 
             xmax = c; 
@@ -354,7 +366,6 @@ function yes() {
     return (ng.f(x + (-ng.xmin + ng.xmax) / ng.W) - ng.f(x - (-ng.xmin + ng.xmax) / ng.W))/(((-ng.xmin + ng.xmax) / ng.W +(-ng.xmin + ng.xmax) / ng.W));
   }
   ng = new Graphics1d(xmin, xmax, ymin, ymax, W, H, m);
-  ng.draw();
   roots = [];
   mins.clear();
   maxs.clear();
