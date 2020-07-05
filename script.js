@@ -22,8 +22,8 @@ class Graphics1d {
   evaluate() {
     let count = 0;
     this.mxe = [this.f(this.xmin), this.f(this.xmax)];
-    this.fvalues = new Float64Array(this.H * this.W);
-    this.dots = new Array(this.H * this.W);
+    this.fvalues = new Float64Array(Math.max(this.H, this.W));
+    this.dots = new Array(Math.max(this.W, this.H));
     for (
       let i = this.xmin;
       i <= this.xmax;
@@ -34,7 +34,7 @@ class Graphics1d {
       this.mxe[1] = Math.max(this.fvalues[count - 1], this.mxe[1]);
       this.mxe[0] = Math.min(this.fvalues[count - 1], this.mxe[0]);
     }
-    this.der = new Float64Array(this.H * this.W)
+    this.der = new Float64Array(Math.max(this.W, this.H));
     for(let i = 0; i < count; i++){
       if(i == 0)
         this.der[i] = (this.fvalues[i + 1] - this.fvalues[i]) / (this.dots[i+1] - this.dots[i])
@@ -108,7 +108,7 @@ class Graphics1d {
     ctx.lineWidth = 1;
     ctx.strokeStyle = dots;
     ctx.moveTo(zerox + this.xmin * stepx, zeroy - this.f(this.xmin) * stepy);
-    for (let i = 0; i <= this.H * this.W; i++) {
+    for (let i = 0; i < Math.max(this.H * this.W); i++) {
       if (this.dots[i] != this.xmin) {
         let cur = this.fvalues[i];
         let prev = this.fvalues[i - 1];
@@ -160,6 +160,65 @@ class Graphics1d {
             zeroy - this.fvalues[i] * stepy
           );
       }
+    }
+    ctx.stroke();
+    ctx.closePath();
+    ctx.beginPath();
+    ctx.strokeStyle = "blue";
+    ctx.moveTo(zerox + this.xmin * stepx, zeroy - this.der[0] * stepy);
+    for (let i = 0; i < Math.max(this.H * this.W); i++) {
+      if (this.dots[i] != this.xmin) {
+        let cur = this.der[i];
+        let prev = this.der[i - 1];
+        if (cur * prev <= 0) {
+          if (Math.abs(cur - prev) > this.ymax - this.ymin) {
+            ctx.stroke();
+            ctx.closePath();
+            ctx.beginPath();
+            ctx.fillStyle = gaps;
+            ctx.arc(
+              zerox + this.dots[i] * stepx,
+              zeroy - stepy * this.ymax,
+              stepx / 10,
+              0,
+              180
+            );
+            ctx.arc(
+              zerox + this.dots[i] * stepx,
+              zeroy - stepy * this.ymin,
+              stepx / 10,
+              0,
+              180
+            );
+            ctx.fill();
+            ctx.closePath();
+            ctx.beginPath();
+          } else {
+            ctx.stroke();
+            ctx.closePath();
+            ctx.beginPath();
+            ctx.fillStyle = zeros;
+            ctx.arc(zerox + this.dots[i] * stepx, zeroy, stepx / 10, 0, 180);
+            ctx.fill();
+            ctx.closePath();
+            ctx.beginPath();
+            ctx.moveTo(
+              zerox + this.dots[i - 1] * stepx,
+              zeroy - this.der[i - 1] * stepy
+            );
+            ctx.lineTo(
+              zerox + this.dots[i] * stepx,
+              zeroy - this.der[i] * stepy
+            );
+          }
+        } else
+          
+          ctx.lineTo(
+            zerox + this.dots[i] * stepx,
+            zeroy - this.der[i] * stepy
+          );
+      }
+      
     }
     ctx.stroke();
     ctx.closePath();
@@ -264,7 +323,7 @@ function yes() {
   ng = new Graphics1d(xmin, xmax, ymin, ymax, W, H, m);
   ng.draw();
   roots.clear();
-  for(var i = xmin; i <= xmax; i += 0.1){
+  for(var i = xmin; i <= xmax; i += (-ng.xmin + ng.xmax) / ng.W){
     regulaFalsi(m, i, i + 0.1, 10e-9);
   }
   var res = document.getElementById("roots");
