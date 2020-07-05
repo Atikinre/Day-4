@@ -297,14 +297,20 @@ function replaceSpecialSequence(str) {
 var sqx = 1,
   sqy = 1;
 var ng = new Graphics1d();
-var roots = new Set;
+var roots = [];
 var mins = new Set;
 var maxs = new Set;
-function check(f = function(x){return  2*x},y = 0, step = 0.01){
-  if (f(y - step) < 0 && f(y + step) > 0)
+function check(f = function(x){return  2*x},y = 0 , step = 0.01 ){
+  if (f(y - step) <= 0 && f(y + step) >= 0){
     mins.add(y);
-  if(f(y - step) > 0 && f(y + step) < 0)
+    console.log("min");
+  }
+  else if(f(y - step) >= 0 && f(y + step) <= 0){
     maxs.add(y);
+    console.log("max");
+  }
+  else console.log(f(y - step), f(y + step));
+  
 }
 ng.draw();
 for(var i = ng.xmin; i <= ng.xmax; i += (-ng.xmin + ng.xmax) / ng.W){
@@ -325,9 +331,9 @@ function regulaFalsi(f = function(x){return  2*x - 2*x}, xmin = -5, xmax = 5, dx
             xmin = c; 
         else {
           if(c < dx)
-            roots.add(0);
+            roots.push(0);
           else
-            roots.add(c);
+            roots.push(c);
           break;
         }
     } 
@@ -356,8 +362,8 @@ function yes() {
   for(var i = xmin; i <= xmax; i += (-ng.xmin + ng.xmax) / ng.W){
     regulaFalsi(d, i, i + 0.1, 10e-9);
   }
-  for(let i = 0; i < roots.length; i++)
-    
+  for(let i = 0; i < roots.size; i++)
+    check(m, roots[i], (-ng.xmin + ng.xmax) / ng.W);
   console.log(roots, mins, maxs);
   document.getElementById("mins").innerHTML = Array.from(mins).join(", ");
   document.getElementById("maxs").innerHTML = Array.from(maxs).join(", ");
