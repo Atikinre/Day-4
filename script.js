@@ -55,7 +55,7 @@ class Graphics1d {
       zerox = -this.xmin * stepx,
       zeroy = this.ymax * stepy;
   for(let i = 0; i < x.length; i += 2){
-    await new Promise(resolve => setTimeout(resolve, 100));
+    //await new Promise(resolve => setTimeout(resolve, 10));
     this.drawbg();
     ctx.strokeStyle = "blue";
     ctx.lineWidth = 1;
@@ -342,7 +342,6 @@ for(let i = 0; i < roots.length; i++)
 document.getElementById("mins").innerHTML = Array.from(mins).join(", ");
 document.getElementById("maxs").innerHTML = Array.from(maxs).join(", ");
 function regulaFalsi(f = function(x){return  2*x - 2*x}, xmin = -5, xmax = 5, dx = 10E-9){
-    
     if (f(xmin) * f(xmax) > 0 || Math.abs(f(xmax) - f(xmin)) < dx) { 
       return false;
     }
@@ -386,15 +385,14 @@ function yes() {
   mins.clear();
   maxs.clear();
   ng.drawbg();
-  ;
   for(var i = xmin; i <= xmax; i += (-ng.xmin + ng.xmax) / ng.W){
     regulaFalsi(d, i, i + 0.1, 10e-9);
   }
-  ng.drawrf(regx, regy);
   for(let i = 0; i < roots.length; i++)
     check(d, roots[i], (-ng.xmin + ng.xmax) / ng.W);
+  console.log(roots, mins, maxs);
   document.getElementById("mins").innerHTML = Array.from(mins).join(", ");
   document.getElementById("maxs").innerHTML = Array.from(maxs).join(", ");
-  
+  ng.drawrf(regx, regy);
 }
 ng.drawrf(regx, regy);
