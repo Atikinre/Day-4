@@ -426,6 +426,8 @@ function yes() {
   document.getElementById("mins").innerHTML = Array.from(mins).join(", ");
   document.getElementById("maxs").innerHTML = Array.from(maxs).join(", ");
   ng.drawrf(regx, regy);
+  regx = [];
+  regy = [];
 }
 var a = 1;
 ng.drawrf(regx, regy);
