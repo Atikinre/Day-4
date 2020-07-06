@@ -28,29 +28,36 @@ class Graphics1d {
     this.dots = new Array(Math.max(this.W, this.H));
     for (
       let i = this.xmin;
-      i <= this.xmax;
-      i += (-this.xmin + this.xmax) / this.W  
+      i < this.xmax;
+      i += (-this.xmin + this.xmax) / this.W
     ) {
       this.dots[count] = i;
       this.fvalues[count++] = this.f(i);
       this.mxe[1] = Math.max(this.fvalues[count - 1], this.mxe[1]);
       this.mxe[0] = Math.min(this.fvalues[count - 1], this.mxe[0]);
     }
-    this.der = new Float64Array(Math.max(this.W, this.H));
-    for(let i = 0; i < count; i++){
-      if(i == 0)
-        this.der[i] = (this.fvalues[i + 1] - this.fvalues[i]) / (this.dots[i+1] - this.dots[i])
-      else if(i == count  - 1)
-        this.der[i] = (this.fvalues[i] - this.fvalues[i-1]) / (this.dots[i] - this.dots[i-1])
+    
+/*    this.der = new Float64Array(Math.max(this.W, this.H));
+    for (let i = 0; i < count; i++) {
+      if (i == 0)
+        this.der[i] =
+          (this.fvalues[i + 1] - this.fvalues[i]) /
+          (this.dots[i + 1] - this.dots[i]);
+      else if (i == count - 1)
+        this.der[i] =
+          (this.fvalues[i] - this.fvalues[i - 1]) /
+          (this.dots[i] - this.dots[i - 1]);
       else
-        this.der[i] = (this.fvalues[i+1] - this.fvalues[i-1]) / (this.dots[i+1] - this.dots[i-1])
-    }
+        this.der[i] =
+          (this.fvalues[i + 1] - this.fvalues[i - 1]) /
+          (this.dots[i + 1] - this.dots[i - 1]);
+    }*/
     this.ev = 1;
     return this.mxe;
   }
-  
-  drawbg(bg = "grey", axis = "green"){
-     let stepx = this.W / (-this.xmin + this.xmax),
+
+  drawbg(bg = "grey", axis = "green") {
+    let stepx = this.W / (-this.xmin + this.xmax),
       stepy = this.H / (-this.ymin + this.ymax),
       zerox = -this.xmin * stepx,
       zeroy = this.ymax * stepy;
@@ -95,8 +102,8 @@ class Graphics1d {
       ctx.closePath();
       ctx.stroke();
     }
-    }
-    //
+  }
+  //
   draw(
     dots = "red",
     axis = "green",
@@ -112,146 +119,143 @@ class Graphics1d {
       stepy = this.H / (-this.ymin + this.ymax),
       zerox = -this.xmin * stepx,
       zeroy = this.ymax * stepy;
-    this.drawbg(bg,axis);
+    this.drawbg(bg, axis);
     // Функция
     {
-    ctx.beginPath();
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = dots;
-    ctx.moveTo(zerox + this.xmin * stepx, zeroy - this.f(this.xmin) * stepy);
-    for (let i = 0; i < Math.max(this.H * this.W); i++) {
-      if (this.dots[i] != this.xmin) {
-        let cur = this.fvalues[i];
-        let prev = this.fvalues[i - 1];
-        if (cur * prev <= 0) {
-          if (Math.abs(cur - prev) > this.ymax - this.ymin) {
-            ctx.stroke();
-            ctx.closePath();
-            ctx.beginPath();
-            ctx.fillStyle = gaps;
-            ctx.arc(
-              zerox + this.dots[i] * stepx,
-              zeroy - stepy * this.ymax,
-              stepx / 10,
-              0,
-              180
-            );
-            ctx.arc(
-              zerox + this.dots[i] * stepx,
-              zeroy - stepy * this.ymin,
-              stepx / 10,
-              0,
-              180
-            );
-            ctx.fill();
-            ctx.closePath();
-            ctx.beginPath();
-          } else {
-            ctx.stroke();
-            ctx.closePath();
-            ctx.beginPath();
-            ctx.fillStyle = zeros;
-            ctx.arc(zerox + this.dots[i] * stepx, zeroy, stepx / 10, 0, 180);
-            ctx.fill();
-            ctx.closePath();
-            ctx.beginPath();
-            ctx.moveTo(
-              zerox + this.dots[i - 1] * stepx,
-              zeroy - this.fvalues[i - 1] * stepy
-            );
+      ctx.beginPath();
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = dots;
+      ctx.moveTo(zerox + this.xmin * stepx, zeroy - this.f(this.xmin) * stepy);
+      for (let i = 0; i < Math.max(this.H * this.W); i++) {
+        if (this.dots[i] != this.xmin) {
+          let cur = this.fvalues[i];
+          let prev = this.fvalues[i - 1];
+          if (cur * prev <= 0) {
+            if (Math.abs(cur - prev) > this.ymax - this.ymin) {
+              ctx.stroke();
+              ctx.closePath();
+              ctx.beginPath();
+              ctx.fillStyle = gaps;
+              ctx.arc(
+                zerox + this.dots[i] * stepx,
+                zeroy - stepy * this.ymax,
+                stepx / 10,
+                0,
+                180
+              );
+              ctx.arc(
+                zerox + this.dots[i] * stepx,
+                zeroy - stepy * this.ymin,
+                stepx / 10,
+                0,
+                180
+              );
+              ctx.fill();
+              ctx.closePath();
+              ctx.beginPath();
+            } else {
+              ctx.stroke();
+              ctx.closePath();
+              ctx.beginPath();
+              ctx.fillStyle = zeros;
+              ctx.arc(zerox + this.dots[i] * stepx, zeroy, stepx / 10, 0, 180);
+              ctx.fill();
+              ctx.closePath();
+              ctx.beginPath();
+              ctx.moveTo(
+                zerox + this.dots[i - 1] * stepx,
+                zeroy - this.fvalues[i - 1] * stepy
+              );
+              ctx.lineTo(
+                zerox + this.dots[i] * stepx,
+                zeroy - this.fvalues[i] * stepy
+              );
+            }
+          } else
             ctx.lineTo(
               zerox + this.dots[i] * stepx,
               zeroy - this.fvalues[i] * stepy
             );
-          }
-        } else
-          
-          ctx.lineTo(
-            zerox + this.dots[i] * stepx,
-            zeroy - this.fvalues[i] * stepy
-          );
+        }
       }
-    }
-    ctx.stroke();
-    ctx.closePath();
+      ctx.stroke();
+      ctx.closePath();
     }
     //
     // Производная
-    {
-    ctx.beginPath();
-    ctx.strokeStyle = "blue";
-    ctx.moveTo(zerox + this.xmin * stepx, zeroy - this.der[0] * stepy);
-    for (let i = 0; i < Math.max(this.H * this.W); i++) {
-      if (this.dots[i] != this.xmin) {
-        let cur = this.der[i];
-        let prev = this.der[i - 1];
-        if (cur * prev <= 0) {
-          if (Math.abs(cur - prev) > this.ymax - this.ymin) {
-            ctx.stroke();
-            ctx.closePath();
-            ctx.beginPath();
-            ctx.fillStyle = gaps;
-            ctx.arc(
-              zerox + this.dots[i] * stepx,
-              zeroy - stepy * this.ymax,
-              stepx / 10,
-              0,
-              180
-            );
-            ctx.arc(
-              zerox + this.dots[i] * stepx,
-              zeroy - stepy * this.ymin,
-              stepx / 10,
-              0,
-              180
-            );
-            ctx.fill();
-            ctx.closePath();
-            ctx.beginPath();
-          } else {
-            ctx.stroke();
-            ctx.closePath();
-            ctx.beginPath();
-            ctx.fillStyle = zeros;
-            ctx.arc(zerox + this.dots[i] * stepx, zeroy, stepx / 10, 0, 180);
-            ctx.fill();
-            ctx.closePath();
-            ctx.beginPath();
-            ctx.moveTo(
-              zerox + this.dots[i - 1] * stepx,
-              zeroy - this.der[i - 1] * stepy
-            );
+/*    {
+      ctx.beginPath();
+      ctx.strokeStyle = "blue";
+      ctx.moveTo(zerox + this.xmin * stepx, zeroy - this.der[0] * stepy);
+      for (let i = 0; i < Math.max(this.H * this.W); i++) {
+        if (this.dots[i] != this.xmin) {
+          let cur = this.der[i];
+          let prev = this.der[i - 1];
+          if (cur * prev <= 0) {
+            if (Math.abs(cur - prev) > this.ymax - this.ymin) {
+              ctx.stroke();
+              ctx.closePath();
+              ctx.beginPath();
+              ctx.fillStyle = gaps;
+              ctx.arc(
+                zerox + this.dots[i] * stepx,
+                zeroy - stepy * this.ymax,
+                stepx / 10,
+                0,
+                180
+              );
+              ctx.arc(
+                zerox + this.dots[i] * stepx,
+                zeroy - stepy * this.ymin,
+                stepx / 10,
+                0,
+                180
+              );
+              ctx.fill();
+              ctx.closePath();
+              ctx.beginPath();
+            } else {
+              ctx.stroke();
+              ctx.closePath();
+              ctx.beginPath();
+              ctx.fillStyle = zeros;
+              ctx.arc(zerox + this.dots[i] * stepx, zeroy, stepx / 10, 0, 180);
+              ctx.fill();
+              ctx.closePath();
+              ctx.beginPath();
+              ctx.moveTo(
+                zerox + this.dots[i - 1] * stepx,
+                zeroy - this.der[i - 1] * stepy
+              );
+              ctx.lineTo(
+                zerox + this.dots[i] * stepx,
+                zeroy - this.der[i] * stepy
+              );
+            }
+          } else
             ctx.lineTo(
               zerox + this.dots[i] * stepx,
               zeroy - this.der[i] * stepy
             );
-          }
-        } else
-          
-          ctx.lineTo(
-            zerox + this.dots[i] * stepx,
-            zeroy - this.der[i] * stepy
-          );
+        }
       }
-      
-    }
-    ctx.stroke();
-    ctx.closePath();
-    }
+      ctx.stroke();
+      ctx.closePath();
+    }*/
     //
     //Текст
     {
-    ctx.font = "25px Consolas";
-    ctx.textBaseline = "ideographic";
-    ctx.fillStyle = "black";
-    let mx = "(" + this.xmax + ", " + this.ymax + ")",
-      mn = "(" + this.xmin + ", " + this.ymin + ")";
-    ctx.fillText(
-      mx,
-      zerox + this.xmax * stepx - (25 * mx.length) / 1.8,
-      zeroy - this.ymax * stepy + 25
-    );
-    ctx.fillText(mn, zerox + this.xmin * stepx, zeroy - this.ymin * stepy);
+      ctx.font = "25px Consolas";
+      ctx.textBaseline = "ideographic";
+      ctx.fillStyle = "black";
+      let mx = "(" + this.xmax + ", " + this.ymax + ")",
+        mn = "(" + this.xmin + ", " + this.ymin + ")";
+      ctx.fillText(
+        mx,
+        zerox + this.xmax * stepx - (25 * mx.length) / 1.8,
+        zeroy - this.ymax * stepy + 25
+      );
+      ctx.fillText(mn, zerox + this.xmin * stepx, zeroy - this.ymin * stepy);
     }
     //
   }
@@ -263,14 +267,13 @@ class Graphics1d {
     gaps = "magenta",
     bg = "gray"
   ) {
-
     if (this.ev == 0) var mx = this.evaluate();
     this.ymin = Math.min(mx[0], mx[1]);
     this.ymax = Math.max(mx[0], mx[1]);
     this.draw(dots, axis, zeros, gaps, bg);
-    
   }
 }
+
 function replaceSpecialSequence(str) {
   str = str.split("cos").join("Math.cos");
   str = str.split("sin").join("Math.sin");
@@ -300,45 +303,67 @@ function replaceSpecialSequence(str) {
   return str;
 }
 var sqx = 1,
-  sqy = 1;
-var ng = new Graphics1d();
-var roots = [];
-var mins = new Set;
-var maxs = new Set;
-function check(f = function(x){return  2*x}, y, step){
-  if (f(y - step) <= 0 && f(y + step) >= 0){
+    sqy = 1,
+    ng = new Graphics1d(),
+    roots = [],
+    mins = new Set(),
+    maxs = new Set();
+function check(
+  f = function(x) {
+    return 2 * x;
+  },
+  y,
+  step
+) {
+  if (f(y - 2*step) < 0 && f(y + 2*step) > 0) {
     mins.add(y);
-  }
-  else if(f(y - step) >= 0 && f(y + step) <= 0){
+  } else if (f(y - 2*step) > 0 && f(y + 2*step) < 0) {
     maxs.add(y);
   }
-  
 }
 
-for(var i = ng.xmin; i <= ng.xmax; i += (-ng.xmin + ng.xmax) / ng.W){
-    regulaFalsi(function(x){return  2*x}, i, i + 0.1, 10e-9);
-  }
-for(let i = 0; i < roots.length; i++)
-    check(function(x){return  2*x}, roots[i], (-ng.xmin + ng.xmax) / ng.W);
+for (var i = ng.xmin; i <= ng.xmax; i += (-ng.xmin + ng.xmax) / ng.W) {
+  regulaFalsi(
+    function(x) {
+      return 2 * x;
+    },
+    i,
+    i + 0.1,
+    10e-9
+  );
+}
+for (let i = 0; i < roots.length; i++)
+  check(
+    function(x) {
+      return 2 * x;
+    },
+    roots[i], 
+    (-ng.xmin + ng.xmax) / ng.W
+  );
 document.getElementById("mins").innerHTML = Array.from(mins).join(", ");
 document.getElementById("maxs").innerHTML = Array.from(maxs).join(", ");
-async function regulaFalsi(f = function(x){return  2*x - 2*x}, xmin = -5, xmax = 5, dx = 10E-9){
-    if (f(xmin) * f(xmax) > 0 || Math.abs(f(xmax) - f(xmin)) < dx) { 
-      return false;
+function regulaFalsi(
+  f = function(x) {
+    return 2 * x - 2 * x;
+  },
+  xmin = -5,
+  xmax = 5,
+  dx = 10e-9
+) {
+  if (f(xmin) * f(xmax) > 0 || Math.abs(f(xmax) - f(xmin)) < dx) {
+    return false;
+  }
+  let c = (xmin + xmax) / 2;
+  for (let i = 0; i < 1000; i++) {
+    c = (xmin * f(xmax) - xmax * f(xmin)) / (f(xmax) - f(xmin));
+    if (f(c) * f(xmin) < 0) xmax = c;
+    else if (f(c) * f(xmax) < 0) xmin = c;
+    else {
+      roots.push(Math.trunc(c / dx) * dx);
+      break;
     }
-    let c = (xmin + xmax)/2;    
-    for (let i=0; i < 1000; i++) {
-        c = (xmin*f(xmax) - xmax*f(xmin))/ (f(xmax) - f(xmin)); 
-        if (f(c)*f(xmin) < 0) 
-            xmax = c; 
-        else if (f(c)*f(xmax) < 0) 
-            xmin = c; 
-        else {
-            roots.push(Math.trunc(c / dx) * dx);
-          break;
-        }
-    } 
-    return true;
+  }
+  return true;
 }
 function yes() {
   var xmin = parseFloat(document.getElementById("xmin").value),
@@ -350,24 +375,30 @@ function yes() {
     f = document.getElementById("f").value;
   sqx = parseFloat(document.getElementById("sqx").value);
   sqy = parseFloat(document.getElementById("sqy").value);
+  a = parseFloat(document.getElementById("a").value);
   f = replaceSpecialSequence(f);
   var m = function(x) {
     return eval(f);
   };
-  var d = function(x){
-    return (ng.f(x + (-ng.xmin + ng.xmax) / ng.W) - ng.f(x - (-ng.xmin + ng.xmax) / ng.W))/(((-ng.xmin + ng.xmax) / ng.W +(-ng.xmin + ng.xmax) / ng.W));
-  }
+  var d = function(x) {
+    return (
+      (ng.f(x + (-ng.xmin + ng.xmax) / ng.W) -
+        ng.f(x - (-ng.xmin + ng.xmax) / ng.W)) /
+      ((-ng.xmin + ng.xmax) / ng.W + (-ng.xmin + ng.xmax) / ng.W)
+    );
+  };
   ng = new Graphics1d(xmin, xmax, ymin, ymax, W, H, m);
   roots = [];
   mins.clear();
   maxs.clear();
-  for(var i = xmin; i <= xmax; i += (-ng.xmin + ng.xmax) / ng.W){
+  for (var i = xmin; i <= xmax; i += (-ng.xmin + ng.xmax) / ng.W) {
     regulaFalsi(d, i, i + 0.1, 10e-9);
   }
-  for(let i = 0; i < roots.length; i++)
+  for (let i = 0; i < roots.length; i++)
     check(d, roots[i], (-ng.xmin + ng.xmax) / ng.W);
   document.getElementById("mins").innerHTML = Array.from(mins).join(", ");
   document.getElementById("maxs").innerHTML = Array.from(maxs).join(", ");
   ng.draw();
 }
+var a = 1;
 ng.draw();
