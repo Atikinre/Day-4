@@ -1,3 +1,4 @@
+var regx = [], regy = [];
 var graph = document.getElementById("canvas");
 var ctx = graph.getContext("2d");
 class Graphics1d {
@@ -56,6 +57,26 @@ class Graphics1d {
     return this.mxe;
   }
 
+  async drawrf(x = [0,1], y = [0, 1]){
+    let stepx = this.W / (-this.xmin + this.xmax),
+      stepy = this.H / (-this.ymin + this.ymax),
+      zerox = -this.xmin * stepx,
+      zeroy = this.ymax * stepy;
+  for(let i = 0; i < x.length; i += 2){
+    await new Promise(resolve => setTimeout(resolve, 300));
+    this.drawbg();
+    ctx.strokeStyle = "blue";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(zerox + x[i] * stepx, zeroy - y[i] * stepy);
+    ctx.lineTo(zerox + x[i + 1] * stepx, zeroy + y[i + 1] * stepy);
+    ctx.stroke();
+    ctx.closePath();
+  }
+  x = [];
+  y = []; 
+}
+  
   drawbg(bg = "grey", axis = "green") {
     let stepx = this.W / (-this.xmin + this.xmax),
       stepy = this.H / (-this.ymin + this.ymax),
@@ -350,15 +371,20 @@ function regulaFalsi(
   xmax = 5,
   dx = 10e-9
 ) {
-  if (f(xmin) * f(xmax) > 0 || Math.abs(f(xmax) - f(xmin)) < dx) {
+  if (f(xmin) * f(xmax) > 0 || (f(xmax) - f(xmin)) == 0) {
     return false;
   }
+  regx.push(xmin);
+  regx.push(xmax);
+  regy.push(f(xmin));
+  regy.push(f(xmax));
   let c = (xmin + xmax) / 2;
   for (let i = 0; i < 1000; i++) {
     c = (xmin * f(xmax) - xmax * f(xmin)) / (f(xmax) - f(xmin));
     if (f(c) * f(xmin) < 0) xmax = c;
     else if (f(c) * f(xmax) < 0) xmin = c;
     else {
+      
       roots.push(Math.trunc(c / dx) * dx);
       break;
     }
@@ -394,11 +420,12 @@ function yes() {
   for (var i = xmin; i <= xmax; i += (-ng.xmin + ng.xmax) / ng.W) {
     regulaFalsi(d, i, i + 0.1, 10e-9);
   }
+  
   for (let i = 0; i < roots.length; i++)
     check(d, roots[i], (-ng.xmin + ng.xmax) / ng.W);
   document.getElementById("mins").innerHTML = Array.from(mins).join(", ");
   document.getElementById("maxs").innerHTML = Array.from(maxs).join(", ");
-  ng.draw();
+  ng.drawrf(regx, regy);
 }
 var a = 1;
-ng.draw();
+ng.drawrf(regx, regy);
